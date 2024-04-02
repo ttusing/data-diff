@@ -453,6 +453,12 @@ class DbtParser:
             if from_tags:
                 logger.debug(f"Found PKs via Tags [{node.name}]: " + str(from_tags))
                 return from_tags
+
+            from_constraints = [name for name, params in node.columns.items() if 'constraints' in params and any(constraint.get('type') == 'primary_key' for constraint in params['constraints'])] or None
+            if from_constraints:
+                logger.debug(f"Found PKs via Constraints [{node.name}]: " + str(from_constraints))
+                return from_constraints
+            
             if node.unique_id in unique_columns:
                 from_uniq = unique_columns.get(node.unique_id)
                 if from_uniq is not None:
